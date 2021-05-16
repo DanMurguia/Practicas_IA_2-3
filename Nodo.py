@@ -1,52 +1,52 @@
-class TreeNode:
+class Nodo:
     def __init__(self, data):
         self.data = data
-        self.children = []
-        self.parent = None
+        self.hijos = []
+        self.padre = None
 
-    def get_level(self):
-        level = 0
-        p = self.parent
+    def obtener_nivel(self):
+        nivel = 0
+        p = self.padre
         while p:
-            level += 1
-            p = p.parent
+            nivel += 1
+            p = p.padre
 
-        return level
+        return nivel
 
-    def print_tree(self):
-        spaces = ' ' * self.get_level() * 3
-        prefix = spaces + "|__" if self.parent else ""
-        print(prefix + self.data)
-        if self.children:
-            for child in self.children:
-                child.print_tree()
+    def imprimir_arbol(self):
+        espacios = ' ' * self.obtener_nivel() * 3
+        prefijo = espacios + "|__" if self.padre else ""
+        print(prefijo + self.data)
+        if self.hijos:
+            for hijo in self.hijos:
+                hijo.imprimir_arbol()
 
-    def add_child(self, child):
-        child.parent = self
-        self.children.append(child)
+    def agregar_hijo(self, hijo):
+        hijo.padre = self
+        self.hijos.append(hijo)
 
 def build_product_tree():
-    root = TreeNode("Electronics")
+    root = Nodo("Electronics")
 
-    laptop = TreeNode("Laptop")
-    laptop.add_child(TreeNode("Mac"))
-    laptop.add_child(TreeNode("Surface"))
-    laptop.add_child(TreeNode("Thinkpad"))
+    laptop = Nodo("Laptop")
+    laptop.agregar_hijo(Nodo("Mac"))
+    laptop.agregar_hijo(Nodo("Surface"))
+    laptop.agregar_hijo(Nodo("Thinkpad"))
 
-    cellphone = TreeNode("Cell Phone")
-    cellphone.add_child(TreeNode("iPhone"))
-    cellphone.add_child(TreeNode("Google Pixel"))
-    cellphone.add_child(TreeNode("Vivo"))
+    cellphone = Nodo("Cell Phone")
+    cellphone.agregar_hijo(Nodo("iPhone"))
+    cellphone.agregar_hijo(Nodo("Google Pixel"))
+    cellphone.agregar_hijo(Nodo("Vivo"))
 
-    tv = TreeNode("TV")
-    tv.add_child(TreeNode("Samsung"))
-    tv.add_child(TreeNode("LG"))
+    tv = Nodo("TV")
+    tv.agregar_hijo(Nodo("Samsung"))
+    tv.agregar_hijo(Nodo("LG"))
 
-    root.add_child(laptop)
-    root.add_child(cellphone)
-    root.add_child(tv)
+    root.agregar_hijo(laptop)
+    root.agregar_hijo(cellphone)
+    root.agregar_hijo(tv)
 
-    root.print_tree()
+    root.imprimir_arbol()
 
 if __name__ == '__main__':
     build_product_tree()
