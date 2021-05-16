@@ -3,6 +3,7 @@ import random
 import genera_matriz as gm
 import agente as ag
 import time
+import Nodo
 
 BLACK = (0, 0, 0)
 water = (0, 0, 255)
@@ -22,6 +23,8 @@ tamañoCasilla = 40
 # tamañoCuadricula es el numero de casillas que tendrá la cuadricula por lado
 tamañoCuadricula = 15
 columna = 0
+root = Nodo
+
 def dibujar(agente,modo,xx,yy):
     print("Agente"+str(agente))
     print("Modo"+str(modo))
@@ -62,8 +65,9 @@ def dibujar(agente,modo,xx,yy):
 
     ente=ag.definirAgente(agente)
 
-    ag.spawn(paramsd, matriz, ente)
-
+    root = ag.spawn(paramsd, matriz, ente)
+    aux = root
+    
     while not gameOver:
             
         pantalla.fill(BLACK)  # La pantalla se llena de un fondo negro.
@@ -71,7 +75,7 @@ def dibujar(agente,modo,xx,yy):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        ag.sense(paramsd,matriz, ente)
+        ag.sense(paramsd,matriz, ente,aux)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
