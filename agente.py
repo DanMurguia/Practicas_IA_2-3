@@ -39,7 +39,8 @@ def spawn(paramsd,matriz, ente):
                 if (ente[matriz[i][j]]):#generalizar
                     paramsd[(i,j)]['S'] = True
                     paramsd[(i,j)]['X'] = True
-                    root = Nodo((i,j))
+                    paramsd[(i,j)]['n'] = True
+                    root = Nodo.Nodo((i,j))
                 else:
                     paramsd[(i,j)]['I'] = False
                     paramsd[(i,j)]['S'] = False
@@ -47,9 +48,8 @@ def spawn(paramsd,matriz, ente):
                     paramsd[(i-1,j)]['I'] = True
                     paramsd[(i-1,j)]['S'] = True
                     paramsd[(i-1,j)]['X'] = True
-                    root = Nodo((i-1,j))
-                    nodo_aux = root
-
+                    paramsd[(i,j)]['n'] = True
+                    root = Nodo.Nodo((i-1,j))
 
             if (paramsd[(i, j)]['F']):
                 if (ente[matriz[i][j]]):
@@ -64,7 +64,7 @@ def spawn(paramsd,matriz, ente):
 
 
 
-def sense(paramsd, matriz, ente, nodo_act):
+def sense(paramsd, matriz, ente):
     col= matriz.shape[0]
     fil = matriz.shape[1]
     aux=0;
@@ -96,21 +96,13 @@ def sense(paramsd, matriz, ente, nodo_act):
 
                 if aux>1 and not paramsd[(i, j )]['F']:
                     paramsd[(i, j )]['O'] = True
-                    nuevo_nodo = Nodo((i,j))
-                    nodo_act.agregar_hijo(nuevo_nodo)
-                    return nuevo_nodo
                     
-                elif aux=1:
-                    return nodo_actual
-                
                 else:
                     paramsd[(i, j )]['k'] = True
-                    nodo_aux = nodo_act.padre
-                    nodo_act = nodo_aux
-                    return nodo_act
 
 
-def step(paramsd, matriz, ente):
+
+def step(paramsd, matriz, ente, nodo_act):
 
     col= matriz.shape[0]
     fil = matriz.shape[1]
@@ -140,30 +132,46 @@ def step(paramsd, matriz, ente):
                         if i-1 >= 0 and ente[matriz[i-1][j]] and not paramsd[(i-1, j)]['V']:
                             paramsd[(i, j)]['X']=False
                             paramsd[(i-1, j)]['X']=True
-
                             costo=ente[matriz[i-1][j]]
-                            return costo
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                nodo_act = nuevo_nodo
+                            return costo, nodo_act
 
                         if j -1 >= 0 and ente[matriz[i][j-1]] and not paramsd[(i, j-1)]['V']:
                             paramsd[(i, j)]['X'] = False
-                            paramsd[(i, j - 1)]['X'] = True
-
+                            paramsd[(i, j - 1)]['O'] = True
                             costo=ente[matriz[i][j-1]]
-                            return costo
-
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                nodo_act = nuevo_nodo
+                            return costo, nodo_act
+                        
                         if i+1 < fil and ente[matriz[i+1][j]] and not paramsd[(i+1, j)]['V'] :
                             paramsd[(i, j)]['X'] = False
                             paramsd[(i +1, j)]['X'] = True
-
                             costo=ente[matriz[i+1][j]]
-                            return costo
-
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                nodo_act = nuevo_nodo
+                            return costo, nodo_act
+                        
                         if j+1 < col and ente[matriz[i][j+1]] and not paramsd[(i, j+1)]['V']:
                             paramsd[(i, j)]['X'] = False
                             paramsd[(i, j+1)]['X'] = True
-
                             costo=ente[matriz[i][j+1]]
-                            return costo
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']: 
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                nodo_act = nuevo_nodo
+                            return costo, nodo_act  
                         
 
 def step_down(paramsd, matriz, ente):

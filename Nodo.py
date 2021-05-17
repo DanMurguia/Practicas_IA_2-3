@@ -16,7 +16,7 @@ class Nodo:
     def imprimir_arbol(self):
         espacios = ' ' * self.obtener_nivel() * 3
         prefijo = espacios + "|__" if self.padre else ""
-        print(prefijo + self.data)
+        print(prefijo + str(self.data))
         if self.hijos:
             for hijo in self.hijos:
                 hijo.imprimir_arbol()

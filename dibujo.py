@@ -23,7 +23,6 @@ tamañoCasilla = 40
 # tamañoCuadricula es el numero de casillas que tendrá la cuadricula por lado
 tamañoCuadricula = 15
 columna = 0
-root = Nodo
 
 def dibujar(agente,modo,xx,yy):
     print("Agente"+str(agente))
@@ -58,15 +57,20 @@ def dibujar(agente,modo,xx,yy):
 
     for x in range(0, fil):
         for y in range(0, col):
-            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False, 'S':False, 'F':False, 'k':False}
+            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False}
 
-    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False, 'S':False,'F':False}
-    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 'S':False,'F':True}
+    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False}
+    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True}
 
     ente=ag.definirAgente(agente)
-
-    root = ag.spawn(paramsd, matriz, ente)
-    aux = root
+    
+        
+    root = Nodo.Nodo("ARBOL")
+    nodo_act = ag.spawn(paramsd, matriz, ente)
+    root.agregar_hijo(nodo_act)
     
     while not gameOver:
             
@@ -75,7 +79,7 @@ def dibujar(agente,modo,xx,yy):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        ag.sense(paramsd,matriz, ente,aux)
+        ag.sense(paramsd,matriz, ente)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -146,7 +150,7 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo=ag.step(paramsd, matriz, ente)
+            costo, nodo_act=ag.step(paramsd, matriz, ente, nodo_act)
             if(costo):
                 costoAcumulado=costo+costoAcumulado
         elif modo == 1:
@@ -156,19 +160,19 @@ def dibujar(agente,modo,xx,yy):
                     gameOver = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
-                        costo=ag.step_up(paramsd, matriz, ente)
+                        costo, nodo_act=ag.step_up(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_a:
-                        costo=ag.step_left(paramsd, matriz, ente)
+                        costo,nodo_act=ag.step_left(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_s:
-                        costo=ag.step_down(paramsd, matriz, ente)
+                        costo,nodo_act=ag.step_down(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_d:
-                        costo=ag.step_right(paramsd, matriz, ente)
+                        costo,nodo_act =ag.step_right(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
         
