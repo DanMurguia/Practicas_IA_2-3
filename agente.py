@@ -68,6 +68,7 @@ def sense(paramsd, matriz, ente):
     col= matriz.shape[0]
     fil = matriz.shape[1]
     aux=0;
+    caminos_bloqueados = 0 
     for i in range(0, fil):
         for j in range(0, col):
             if (paramsd[(i, j)]['X']):
@@ -77,26 +78,42 @@ def sense(paramsd, matriz, ente):
                     paramsd[(i-1, j)]['S']= True
                     if (ente[matriz[i -1][j]]and not paramsd[(i-1, j)]['V']):
                         aux = aux + 1
+                    if not ente[matriz[i-1][j]] or paramsd[(i-1, j)]['V']:
+                        caminos_bloqueados += 1    
+                else: 
+                    caminos_bloqueados += 1
 
                 if(i<fil-1):
                     paramsd[(i+1,j)]['S'] = True
                     if (ente[matriz[i+1][j]]and not paramsd[(i+1, j)]['V']):
                         aux = aux + 1
+                    if not ente[matriz[i+1][j]] or paramsd[(i+1, j)]['V']:
+                        caminos_bloqueados += 1
+                else:
+                    caminos_bloqueados += 1
 
                 if (j>0):
                     paramsd[(i, j-1)]['S']= True
                     if (ente[matriz[i][j -1]] and not paramsd[(i, j-1)]['V']):
                         aux = aux + 1
+                    if not ente[matriz[i][j-1]] or paramsd[(i, j-1)]['V']:
+                        caminos_bloqueados += 1
+                else:
+                    caminos_bloqueados += 1
 
                 if (j < col-1):
-                    paramsd[(i, j+1)]['S']= True
+                    paramsd[(i, j+1)]['S'] = True
                     if (ente[matriz[i][j+1]]and not paramsd[(i, j+1)]['V']):
                         aux = aux+1
+                    if not ente[matriz[i][j+1]] or paramsd[(i, j+1)]['V']:
+                        caminos_bloqueados += 1
+                else:
+                    caminos_bloqueados += 1
 
                 if aux>1:
                     paramsd[(i, j )]['O'] = True
                     
-                else:
+                elif caminos_bloqueados > 3:
                     paramsd[(i, j )]['k'] = True
 
 
@@ -115,16 +132,24 @@ def step(paramsd, matriz, ente, nodo_act):
 
 
                     if not paramsd[(i, j)]['F']:
-
+                    
                         if paramsd[(i, j)]['X'] and paramsd[(i, j)]['V']:
                             if  paramsd[(i, j)]['k']:
-                                nuevo_nodo = Nodo.Nodo((i,j))
-                                nodo_act.agregar_hijo(nuevo_nodo)
-                                coordenadas = nuevo_nodo.padre.data
-                                print(coordenadas)
-                                paramsd[(i,j)]['X'] = False
-                                paramsd[coordenadas]['X'] = True
-                                return False, nodo_act
+                                if not paramsd[(i, j)]['n']:
+                                    nuevo_nodo = Nodo.Nodo((i,j))
+                                    nodo_act.agregar_hijo(nuevo_nodo)
+                                    coordenadas = nuevo_nodo.padre.data
+                                    paramsd[(i,j)]['n'] = True
+                                    print(coordenadas)
+                                    paramsd[(i,j)]['X'] = False
+                                    paramsd[coordenadas]['X'] = True
+                                    return False, nodo_act
+                                else:
+                                    coordenadas = nodo_act.padre.data
+                                    print(coordenadas)
+                                    paramsd[(i,j)]['X'] = False
+                                    paramsd[coordenadas]['X'] = True
+                                    return False, nodo_act.padre
                                                                     
                                 
 
@@ -173,8 +198,19 @@ def step(paramsd, matriz, ente, nodo_act):
                                 nodo_act.agregar_hijo(nuevo_nodo)
                                 paramsd[(i,j)]['n'] = True
                                 nodo_act = nuevo_nodo
-                            return costo, nodo_act  
-                    return False, nodo_act    
+                            return costo, nodo_act
+                        return False, nodo_act
+                    else:
+                        if not paramsd[(i, j)]['n']:
+                            nuevo_nodo = Nodo.Nodo((i,j))
+                            nodo_act.agregar_hijo(nuevo_nodo)
+                            paramsd[(i,j)]['n'] = True
+                            return False, nodo_act
+                        else:
+                            return False, nodo_act
+                    
+
+
 
 def step_down(paramsd, matriz, ente):
 

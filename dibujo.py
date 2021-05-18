@@ -61,9 +61,9 @@ def dibujar(agente,modo,xx,yy):
                                'S':False, 'F':False, 'k':False, 'n':False}
 
     paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
-                         'S':False,'F':False}
+                         'S':False,'F':False, 'k':False, 'n':False}
     paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
-                      'S':False,'F':True}
+                      'S':False,'F':True, 'k':False, 'n':False}
 
     ente=ag.definirAgente(agente)
     
