@@ -71,7 +71,6 @@ def sense(paramsd, matriz, ente):
     for i in range(0, fil):
         for j in range(0, col):
             if (paramsd[(i, j)]['X']):
-
                 paramsd[(i, j)]['S'] = True
 
                 if(i>0):
@@ -94,7 +93,7 @@ def sense(paramsd, matriz, ente):
                     if (ente[matriz[i][j+1]]and not paramsd[(i, j+1)]['V']):
                         aux = aux+1
 
-                if aux>1 and not paramsd[(i, j )]['F']:
+                if aux>1:
                     paramsd[(i, j )]['O'] = True
                     
                 else:
@@ -102,8 +101,10 @@ def sense(paramsd, matriz, ente):
 
 
 
-def step(paramsd, matriz, ente, nodo_act):
 
+
+def step(paramsd, matriz, ente, nodo_act):
+    aux = 0
     col= matriz.shape[0]
     fil = matriz.shape[1]
 
@@ -111,21 +112,22 @@ def step(paramsd, matriz, ente, nodo_act):
         for j in range(0, col):
 
                 if paramsd[(i, j)]['X']:
-                    print(paramsd[(i, j)], i, j)
-
 
 
                     if not paramsd[(i, j)]['F']:
 
                         if paramsd[(i, j)]['X'] and paramsd[(i, j)]['V']:
+                            if  paramsd[(i, j)]['k']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                coordenadas = nuevo_nodo.padre.data
+                                print(coordenadas)
+                                paramsd[(i,j)]['X'] = False
+                                paramsd[coordenadas]['X'] = True
+                                return False, nodo_act
+                                                                    
+                                
 
-                            for auxi in range(0, fil):
-                                for auxj in range(0, col):
-                                    if not paramsd[(auxi, auxj)]['k'] and paramsd[(auxi, auxj)]['O']:
-                                        paramsd[(auxi, auxj)]['X'] = True
-                                        paramsd[(i, j)]['X'] = False
-                                        paramsd[(auxi, auxj)]['V'] = False
-                                        return False
 
                         paramsd[(i, j)]['V'] = True
 
@@ -142,7 +144,7 @@ def step(paramsd, matriz, ente, nodo_act):
 
                         if j -1 >= 0 and ente[matriz[i][j-1]] and not paramsd[(i, j-1)]['V']:
                             paramsd[(i, j)]['X'] = False
-                            paramsd[(i, j - 1)]['O'] = True
+                            paramsd[(i, j - 1)]['X'] = True
                             costo=ente[matriz[i][j-1]]
                             if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
                                 nuevo_nodo = Nodo.Nodo((i,j))
@@ -172,7 +174,7 @@ def step(paramsd, matriz, ente, nodo_act):
                                 paramsd[(i,j)]['n'] = True
                                 nodo_act = nuevo_nodo
                             return costo, nodo_act  
-                        
+                    return False, nodo_act    
 
 def step_down(paramsd, matriz, ente):
 
@@ -183,7 +185,6 @@ def step_down(paramsd, matriz, ente):
         for j in range(0, col):
 
                 if paramsd[(i, j)]['X']:
-                    print(paramsd[(i, j)], i, j)
 
 
 
@@ -206,7 +207,6 @@ def step_up(paramsd, matriz, ente):
         for j in range(0, col):
 
                 if paramsd[(i, j)]['X']:
-                    print(paramsd[(i, j)], i, j)
 
 
 
@@ -229,7 +229,6 @@ def step_right(paramsd, matriz, ente):
         for j in range(0, col):
 
                 if paramsd[(i, j)]['X']:
-                    print(paramsd[(i, j)], i, j)
 
 
 
@@ -252,7 +251,6 @@ def step_left(paramsd, matriz, ente):
         for j in range(0, col):
 
                 if paramsd[(i, j)]['X']:
-                    print(paramsd[(i, j)], i, j)
 
 
 

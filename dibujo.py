@@ -150,9 +150,9 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo, nodo_act=ag.step(paramsd, matriz, ente, nodo_act)
-            if(costo):
-                costoAcumulado=costo+costoAcumulado
+            costo, nodo_act = ag.step(paramsd, matriz, ente, nodo_act)
+            root.imprimir_arbol()
+            costoAcumulado=costo+costoAcumulado
         elif modo == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
