@@ -154,8 +154,12 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo = agente.step_profundidad(paramsd, matriz)
+            costo = agente.step_anchura(paramsd, matriz)
+            print()
             agente.root.imprimir_arbol()
+            for i in range(len(agente.lista)):
+              print(agente.lista[i].data)
+              
             costoAcumulado=costo+costoAcumulado
         elif modo == 1:
             for event in pygame.event.get():
@@ -182,6 +186,6 @@ def dibujar(agente,modo,xx,yy):
                             costoAcumulado=costo+costoAcumulado
         
         
-        reloj.tick(5)
+        reloj.tick(1)
     pygame.quit()
     print("Costo acumulado: "+str(costoAcumulado))
