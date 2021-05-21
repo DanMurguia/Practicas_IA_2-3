@@ -232,7 +232,111 @@ class Agente:
                                 return False
                         
     
-    
+    def step_anchura(paramsd, matriz, ente, nodo_act,lista):
+    aux = 0
+    col= matriz.shape[0]
+    fil = matriz.shape[1]
+
+    for i in range(0, fil):
+        for j in range(0, col):
+
+                if paramsd[(i, j)]['X']:
+
+
+                    if not paramsd[(i, j)]['F']:
+                    
+                        if paramsd[(i, j)]['X'] and paramsd[(i, j)]['V']:
+                            if  paramsd[(i, j)]['k']:
+                                if not paramsd[(i, j)]['n']:
+                                    nuevo_nodo = Nodo.Nodo((i,j))
+                                    nodo_act.agregar_hijo(nuevo_nodo)
+                                    #coordenadas = nuevo_nodo.padre.data
+                                    paramsd[(i,j)]['n'] = True
+                                    paramsd[(i,j)]['X'] = False
+                                    #lista.pop(0)
+                                    nodo_act=lista[0]
+                                    
+                                    paramsd[nodo_act.data]['X'] = True
+                                    return False, nodo_act,lista
+                                else:
+                                    coordenadas = nodo_act.padre.data
+                                    paramsd[(i,j)]['X'] = False
+                                    #paramsd[coordenadas]['X'] = True
+                                    lista.pop(0)
+                                    nodo_act=lista[0]
+                                    paramsd[nodo_act.data]['X'] = True
+                                    return False, lista[0],lista
+                                                                    
+                                
+
+
+                        paramsd[(i, j)]['V'] = True
+
+                        if i-1 >= 0 and ente[matriz[i-1][j]] and not paramsd[(i-1, j)]['V']:
+                            paramsd[(i, j)]['X']=False
+                            paramsd[(i-1, j)]['X']=True
+                            costo=ente[matriz[i-1][j]]
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                lista.append(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                paramsd[(i-1, j)]['X'] = False
+                                paramsd[nodo_act.data]['X']=True
+                                #nodo_act = nuevo_nodo
+                            return costo, nodo_act,lista
+
+                        if j -1 >= 0 and ente[matriz[i][j-1]] and not paramsd[(i, j-1)]['V']:
+                            paramsd[(i, j)]['X'] = False
+                            paramsd[(i, j - 1)]['X'] = True
+                            costo=ente[matriz[i][j-1]]
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                lista.append(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                paramsd[(i, j - 1)]['X'] = False
+                                paramsd[nodo_act.data]['X']=True
+                                #nodo_act = nuevo_nodo
+                            return costo, nodo_act,lista
+                        
+                        if i+1 < fil and ente[matriz[i+1][j]] and not paramsd[(i+1, j)]['V'] :
+                            paramsd[(i, j)]['X'] = False
+                            paramsd[(i +1, j)]['X'] = True
+                            costo=ente[matriz[i+1][j]]
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']:
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                lista.append(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                paramsd[(i +1, j)]['X'] = False
+                                paramsd[nodo_act.data]['X']=True
+                                #nodo_act = nuevo_nodo
+                            return costo, nodo_act,lista
+                        
+                        if j+1 < col and ente[matriz[i][j+1]] and not paramsd[(i, j+1)]['V']:
+                            paramsd[(i, j)]['X'] = False
+                            paramsd[(i, j+1)]['X'] = True
+                            costo=ente[matriz[i][j+1]]
+                            if paramsd[(i,j)]['O'] and not paramsd[(i,j)]['n']: 
+                                nuevo_nodo = Nodo.Nodo((i,j))
+                                nodo_act.agregar_hijo(nuevo_nodo)
+                                lista.append(nuevo_nodo)
+                                paramsd[(i,j)]['n'] = True
+                                paramsd[(i, j+1)]['X'] = False
+                                paramsd[nodo_act.data]['X']=True
+                                #nodo_act = nuevo_nodo
+                            return costo, nodo_act,lista
+                        return False, nodo_act,lista
+                    else:
+                        if not paramsd[(i, j)]['n']:
+                            nuevo_nodo = Nodo.Nodo((i,j))
+                            nodo_act.agregar_hijo(nuevo_nodo)
+                            paramsd[(i,j)]['n'] = True
+                            return False, nodo_act,lista
+                        else:
+                            return False, nodo_act,lista
+
     
     def step_down(self, paramsd, matriz):
     

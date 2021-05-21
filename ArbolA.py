@@ -1,6 +1,7 @@
 import Nodo
 
 def Crear_Nodo(x,y,nodoActual,O):
+
 	nodo=Nodo.Nodo((x,y))
 	nodoActual.agregar_hijo(nodo)
 	if O == 1:

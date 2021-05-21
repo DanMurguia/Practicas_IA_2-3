@@ -17,6 +17,8 @@ pantano = (102, 0, 102)
 nieve = (255, 255, 255)
 land = (181, 101, 29)
 
+
+
 # tamañoCasilla es el tamaño que tendrá cada lado de las casillas
 tamañoCasilla = 40
 
@@ -30,6 +32,7 @@ def dibujar(agente,modo,xx,yy):
     pygame.init()
     costo=0
     costoAcumulado=0
+    lista=[]
 
     # tamañoPantalla es el una tupla con los valores del tamaño de la pantalla
     tamañoPantalla = (tamañoCasilla*tamañoCuadricula,
@@ -65,11 +68,11 @@ def dibujar(agente,modo,xx,yy):
     paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
                       'S':False,'F':True, 'k':False, 'n':False}
 
+
     agente=ag.Agente(agente)
     
     agente.spawn(paramsd, matriz)
-    
-    
+       
     while not gameOver:
             
         pantalla.fill(BLACK)  # La pantalla se llena de un fondo negro.
@@ -117,7 +120,10 @@ def dibujar(agente,modo,xx,yy):
                     else:
                         pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
 
-
+                    if lista_params['X'] and lista_params['F']:
+                        gameOver=True
+                        print("Ha llegado a su objetivo!!!")
+                        time.sleep(30)
                     columna = columna+1
 
                     ## Se obtiene la lista de parametros para esta coordenada
@@ -158,6 +164,7 @@ def dibujar(agente,modo,xx,yy):
                     gameOver = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
+
                         costo=agente.step_up(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
