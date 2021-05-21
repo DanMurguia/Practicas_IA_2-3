@@ -65,12 +65,10 @@ def dibujar(agente,modo,xx,yy):
     paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
                       'S':False,'F':True, 'k':False, 'n':False}
 
-    ente=ag.definirAgente(agente)
+    agente=ag.Agente(agente)
     
-        
-    root = Nodo.Nodo("ARBOL")
-    nodo_act = ag.spawn(paramsd, matriz, ente)
-    root.agregar_hijo(nodo_act)
+    agente.spawn(paramsd, matriz)
+    
     
     while not gameOver:
             
@@ -79,7 +77,7 @@ def dibujar(agente,modo,xx,yy):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        ag.sense(paramsd,matriz, ente)
+        agente.sense(paramsd,matriz)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -150,8 +148,8 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo, nodo_act = ag.step(paramsd, matriz, ente, nodo_act)
-            root.imprimir_arbol()
+            costo = agente.step_profundidad(paramsd, matriz)
+            agente.root.imprimir_arbol()
             costoAcumulado=costo+costoAcumulado
         elif modo == 1:
             for event in pygame.event.get():
@@ -160,19 +158,19 @@ def dibujar(agente,modo,xx,yy):
                     gameOver = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
-                        costo, nodo_act=ag.step_up(paramsd, matriz, ente, nodo_act)
+                        costo=agente.step_up(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_a:
-                        costo,nodo_act=ag.step_left(paramsd, matriz, ente, nodo_act)
+                        costo = agente.step_left(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_s:
-                        costo,nodo_act=ag.step_down(paramsd, matriz, ente, nodo_act)
+                        costo=agente.step_down(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_d:
-                        costo,nodo_act =ag.step_right(paramsd, matriz, ente, nodo_act)
+                        costo=agente.step_right(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
         
