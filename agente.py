@@ -137,22 +137,19 @@ class Agente:
                                     if not paramsd[(i, j)]['n']:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
-                                        #coordenadas = nuevo_nodo.padre.data
+                                        coordenadas = nuevo_nodo.padre.data
                                         paramsd[(i,j)]['n'] = True
+                                        print(coordenadas)
                                         paramsd[(i,j)]['X'] = False
-                                        #lista.pop(0)
-                                        self.nodo_act=self.lista[0]
-                                        
-                                        paramsd[self.nodo_act.data]['X'] = True
+                                        paramsd[coordenadas]['X'] = True
                                         return False
-                                else:
-                                    #coordenadas = self.nodo_act.padre.data
-                                    paramsd[(i,j)]['X'] = False
-                                    #paramsd[coordenadas]['X'] = True
-                                    self.lista.pop(0)
-                                    self.nodo_act=self.lista[0]
-                                    paramsd[self.nodo_act.data]['X'] = True
-                                    return False
+                                    else:
+                                        coordenadas = self.nodo_act.padre.data
+                                        print(coordenadas)
+                                        paramsd[(i,j)]['X'] = False
+                                        paramsd[coordenadas]['X'] = True
+                                        self.nodo_act = self.nodo_act.padre
+                                        return False
                                                                         
                                     
     
@@ -167,18 +164,13 @@ class Agente:
                                     if not self.nodo_act.padre:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.root.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i-1, j)]['X'] = False
-                                        paramsd[self.root.data]['X']=True
-                                        #nodo_act = nuevo_nodo
+                                        self.nodo_act = nuevo_nodo
                                     else:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i-1, j)]['X'] = False
-                                        paramsd[self.nodo_act.data]['X']=True
+                                        self.nodo_act = nuevo_nodo
                                 return costo
     
                             if j -1 >= 0 and self.ente[matriz[i][j-1]] and not paramsd[(i, j-1)]['V']:
@@ -189,19 +181,14 @@ class Agente:
                                     if not self.nodo_act.padre:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.root.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j-1)]['X'] = False
-                                        paramsd[self.root.data]['X']=True
-                                        #nodo_act = nuevo_nodo
+                                        nodo_act = nuevo_nodo
                                     else:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j-1)]['X'] = False
-                                        paramsd[self.nodo_act.data]['X']=True
-                                return costo                           
+                                        self.nodo_act = nuevo_nodo
+                                return costo                            
 
                             if i+1 < fil and self.ente[matriz[i+1][j]] and not paramsd[(i+1, j)]['V'] :
                                 paramsd[(i, j)]['X'] = False
@@ -211,18 +198,13 @@ class Agente:
                                     if not self.nodo_act.padre:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.root.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i+1, j)]['X'] = False
-                                        paramsd[self.root.data]['X']=True
-                                        #nodo_act = nuevo_nodo
+                                        self.nodo_act = nuevo_nodo
                                     else:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i+1, j)]['X'] = False
-                                        paramsd[self.nodo_act.data]['X']=True
+                                        self.nodo_act = nuevo_nodo
                                 return costo
                             
                             if j+1 < col and self.ente[matriz[i][j+1]] and not paramsd[(i, j+1)]['V']:
@@ -233,18 +215,13 @@ class Agente:
                                     if not self.nodo_act.padre:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.root.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j+1)]['X'] = False
-                                        paramsd[self.root.data]['X']=True
-                                        #nodo_act = nuevo_nodo
+                                        nodo_act = nuevo_nodo
                                     else:
                                         nuevo_nodo = Nodo.Nodo((i,j))
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
-                                        self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j+1)]['X'] = False
-                                        paramsd[self.nodo_act.data]['X']=True
+                                        nodo_act = nuevo_nodo
                                 return costo
                             return False
                         else:
@@ -315,7 +292,7 @@ class Agente:
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
                                         self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j - 1)]['X'] = False
+                                        paramsd[(i-1, j)]['X'] = False
                                         paramsd[self.nodo_act.data]['X']=True
                                         #self.nodo_act = nuevo_nodo
                                 return costo
@@ -330,7 +307,7 @@ class Agente:
                                         self.root.agregar_hijo(nuevo_nodo)
                                         self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i-1, j)]['X'] = False
+                                        paramsd[(i, j-1)]['X'] = False
                                         paramsd[self.nodo_act.data]['X']=True
                                         #self.nodo_act = nuevo_nodo
                                     else:
@@ -353,7 +330,7 @@ class Agente:
                                         self.root.agregar_hijo(nuevo_nodo)
                                         self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i-1, j)]['X'] = False
+                                        paramsd[(i+1, j)]['X'] = False
                                         paramsd[self.nodo_act.data]['X']=True
                                         #self.nodo_act = nuevo_nodo
                                     else:
@@ -361,7 +338,7 @@ class Agente:
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
                                         self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j - 1)]['X'] = False
+                                        paramsd[(i+1, j)]['X'] = False
                                         paramsd[self.nodo_act.data]['X']=True
                                         #self.nodo_act = nuevo_nodo
                                 return costo
@@ -376,7 +353,7 @@ class Agente:
                                         self.root.agregar_hijo(nuevo_nodo)
                                         self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i-1, j)]['X'] = False
+                                        paramsd[(i, j+1)]['X'] = False
                                         paramsd[self.nodo_act.data]['X']=True
                                         #self.nodo_act = nuevo_nodo
                                     else:
@@ -384,7 +361,7 @@ class Agente:
                                         self.nodo_act.agregar_hijo(nuevo_nodo)
                                         self.lista.append(nuevo_nodo)
                                         paramsd[(i,j)]['n'] = True
-                                        paramsd[(i, j - 1)]['X'] = False
+                                        paramsd[(i, j + 1)]['X'] = False
                                         paramsd[self.nodo_act.data]['X']=True
                                         #self.nodo_act = nuevo_nodo
                                 return costo
