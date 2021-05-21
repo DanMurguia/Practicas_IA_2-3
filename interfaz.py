@@ -105,7 +105,7 @@ class MainWindow(tk.Frame):
         x = self.var_ekis.get()
         y = self.var_ye.get()
         if ente and modo:
-            dibujo.dibujar(ente,modo,x,y)
+            dibujo.dibujar(ente,modo,y,x)
         else:
             messagebox.showinfo(message="Seleccione un personaje y un modo")
         
