@@ -3,6 +3,7 @@ import random
 import genera_matriz as gm
 import agente as ag
 import time
+import Nodo
 
 BLACK = (0, 0, 0)
 water = (0, 0, 255)
@@ -16,18 +17,22 @@ pantano = (102, 0, 102)
 nieve = (255, 255, 255)
 land = (181, 101, 29)
 
+
+
 # tamañoCasilla es el tamaño que tendrá cada lado de las casillas
 tamañoCasilla = 40
 
 # tamañoCuadricula es el numero de casillas que tendrá la cuadricula por lado
 tamañoCuadricula = 15
 columna = 0
+
 def dibujar(agente,modo,xx,yy):
     print("Agente"+str(agente))
     print("Modo"+str(modo))
     pygame.init()
     costo=0
     costoAcumulado=0
+    lista=[]
 
     # tamañoPantalla es el una tupla con los valores del tamaño de la pantalla
     tamañoPantalla = (tamañoCasilla*tamañoCuadricula,
@@ -55,15 +60,21 @@ def dibujar(agente,modo,xx,yy):
 
     for x in range(0, fil):
         for y in range(0, col):
-            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False, 'S':False, 'F':False, 'k':False}
+            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False}
 
-    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False, 'S':False,'F':False}
-    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 'S':False,'F':True}
+    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False, 'k':False, 'n':False}
+    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True, 'k':False, 'n':False}
 
     ente=ag.definirAgente(agente)
-
-    ag.spawn(paramsd, matriz, ente)
-
+    
+        
+    root = Nodo.Nodo("ARBOL")
+    nodo_act,lista= ag.spawn_anchura(paramsd, matriz, ente,lista)
+    root.agregar_hijo(nodo_act)
+    
     while not gameOver:
             
         pantalla.fill(BLACK)  # La pantalla se llena de un fondo negro.
@@ -111,7 +122,10 @@ def dibujar(agente,modo,xx,yy):
                     else:
                         pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
 
-
+                    if lista_params['X'] and lista_params['F']:
+                        gameOver=True
+                        print("Ha llegado a su objetivo!!!")
+                        time.sleep(30)
                     columna = columna+1
 
                     ## Se obtiene la lista de parametros para esta coordenada
@@ -142,9 +156,12 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo=ag.step(paramsd, matriz, ente)
-            if(costo):
-                costoAcumulado=costo+costoAcumulado
+            costo, nodo_act,fila = ag.step_anchura(paramsd, matriz, ente, nodo_act,lista)
+            root.imprimir_arbol()
+            for i in range(len(lista)):
+                print(lista[i].data)
+            
+            costoAcumulado=costo+costoAcumulado
         elif modo == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -152,19 +169,19 @@ def dibujar(agente,modo,xx,yy):
                     gameOver = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
-                        costo=ag.step_up(paramsd, matriz, ente)
+                        costo, nodo_act=ag.step_up(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_a:
-                        costo=ag.step_left(paramsd, matriz, ente)
+                        costo,nodo_act=ag.step_left(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_s:
-                        costo=ag.step_down(paramsd, matriz, ente)
+                        costo,nodo_act=ag.step_down(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_d:
-                        costo=ag.step_right(paramsd, matriz, ente)
+                        costo,nodo_act =ag.step_right(paramsd, matriz, ente, nodo_act)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
         
