@@ -62,7 +62,6 @@ class Agente:
                         paramsd[(i - 1, j)]['S'] = True
     
     
-    
     def sense(self,paramsd, matriz):
         col= matriz.shape[0]
         fil = matriz.shape[1]
@@ -114,10 +113,7 @@ class Agente:
                         
                     elif caminos_bloqueados > 3:
                         paramsd[(i, j )]['k'] = True
-    
-    
-    
-    
+       
     
     def step_profundidad(self, paramsd, matriz):
         aux = 0
@@ -375,7 +371,7 @@ class Agente:
                             else:
                                 return False
 
-    
+
     def step_down(self, paramsd, matriz):
     
         col= matriz.shape[0]
