@@ -39,6 +39,7 @@ class Agente:
                         self.root = Nodo.Nodo((i,j))
                         self.nodo_act = self.root
                         self.lista.append(self.root)
+                        self.nodo_act.costo_acumulado=0
                     else:
                         paramsd[(i,j)]['I'] = False
                         paramsd[(i,j)]['S'] = False
@@ -50,7 +51,7 @@ class Agente:
                         self.root = Nodo.Nodo((i-1,j))
                         self.nodo_act = self.root
                         self.lista.append(self.root)
-    
+                        self.nodo_act.costo_acumulado=0
                 if (paramsd[(i, j)]['F']):
                     if (self.ente[matriz[i][j]]):
     
@@ -114,11 +115,99 @@ class Agente:
                         
                     elif caminos_bloqueados > 3:
                         paramsd[(i, j )]['k'] = True
-    
-    
-    
-    
-    
+
+    def sense_estrella(self, paramsd, matriz,xfinal,yfinal):
+        col = matriz.shape[0]
+        fil = matriz.shape[1]
+        aux = 0;
+        caminos_bloqueados = 0
+        for i in range(0, fil):
+            for j in range(0, col):
+                if (paramsd[(i, j)]['X']):
+                    paramsd[(i, j)]['S'] = True
+
+                    if (i > 0):
+                        paramsd[(i - 1, j)]['S'] = True
+                        if (self.ente[matriz[i - 1][j]] and not paramsd[(i - 1, j)]['V']):
+                            if not paramsd[(i - 1, j)]['n']:
+                                paramsd[(i - 1, j)]['O'] = True
+                                nuevo_nodo = Nodo.Nodo((i-1, j))
+                                self.nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i-1, j)]['n'] = True
+                                nuevo_nodo.costo_acumulado= self.costo_acumulado(i - 1, j, matriz)
+                                nuevo_nodo.distancia= self.calcular_distancia(i - 1, j,xfinal,yfinal)
+                                nuevo_nodo.evaluacion=nuevo_nodo.costo_acumulado+nuevo_nodo.distancia
+                                print(nuevo_nodo.distancia)
+                                print(nuevo_nodo.costo_acumulado)
+                                print(nuevo_nodo.evaluacion)
+
+                        else:# self.ente[matriz[i - 1][j]] or paramsd[(i - 1, j)]['V']:
+                            caminos_bloqueados += 1
+                    else:
+                        caminos_bloqueados += 1
+
+                    if (i < fil - 1):
+                        paramsd[(i + 1, j)]['S'] = True
+                        if (self.ente[matriz[i + 1][j]] and not paramsd[(i + 1, j)]['V']):
+                            if not paramsd[(i + 1, j)]['n']:
+                                paramsd[(i + 1, j)]['O'] = True
+                                nuevo_nodo = Nodo.Nodo((i + 1, j))
+                                self.nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i +1, j)]['n'] = True
+                                nuevo_nodo.costo_acumulado = self.costo_acumulado(i +1, j, matriz)
+                                nuevo_nodo.distancia = self.calcular_distancia(i + 1, j,xfinal, yfinal)
+                                nuevo_nodo.evaluacion = nuevo_nodo.costo_acumulado + nuevo_nodo.distancia
+                                print(nuevo_nodo.distancia)
+                                print(nuevo_nodo.costo_acumulado)
+                                print(nuevo_nodo.evaluacion)
+                        else:# self.ente[matriz[i + 1][j]] or paramsd[(i + 1, j)]['V']:
+                            caminos_bloqueados += 1
+                    else:
+                        caminos_bloqueados += 1
+
+                    if (j > 0):
+                        paramsd[(i, j - 1)]['S'] = True
+                        if (self.ente[matriz[i][j - 1]] and not paramsd[(i, j - 1)]['V']):
+                            if not paramsd[(i , j-1)]['n']:
+                                paramsd[(i , j-1)]['O'] = True
+                                nuevo_nodo = Nodo.Nodo((i , j-1))
+                                self.nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i , j-1)]['n'] = True
+                                nuevo_nodo.costo_acumulado = self.costo_acumulado(i , j-1, matriz)
+                                nuevo_nodo.distancia = self.calcular_distancia(i, j - 1,xfinal, yfinal)
+                                nuevo_nodo.evaluacion = nuevo_nodo.costo_acumulado + nuevo_nodo.distancia
+                                print(nuevo_nodo.distancia)
+                                print(nuevo_nodo.costo_acumulado)
+                                print(nuevo_nodo.evaluacion)
+                        else:# self.ente[matriz[i][j - 1]] or paramsd[(i, j - 1)]['V']:
+                            caminos_bloqueados += 1
+                    else:
+                        caminos_bloqueados += 1
+
+                    if (j < col - 1):
+                        paramsd[(i, j + 1)]['S'] = True
+                        if (self.ente[matriz[i][j + 1]] and not paramsd[(i, j + 1)]['V']):
+                            if not paramsd[(i , j+1)]['n']:
+                                paramsd[(i , j+1)]['O'] = True
+                                nuevo_nodo = Nodo.Nodo((i , j+1))
+                                self.nodo_act.agregar_hijo(nuevo_nodo)
+                                paramsd[(i , j+1)]['n'] = True
+                                nuevo_nodo.costo_acumulado = self.costo_acumulado(i , j+1, matriz)
+                                nuevo_nodo.distancia = self.calcular_distancia(i, j + 1,xfinal, yfinal)
+                                nuevo_nodo.evaluacion = nuevo_nodo.costo_acumulado + nuevo_nodo.distancia
+                                print(nuevo_nodo.distancia)
+                                print(nuevo_nodo.costo_acumulado)
+                                print(nuevo_nodo.evaluacion)
+                        else:# self.ente[matriz[i][j + 1]] or paramsd[(i, j + 1)]['V']:
+                            caminos_bloqueados += 1
+                    else:
+
+                        caminos_bloqueados += 1
+
+                    if caminos_bloqueados > 3:
+                        paramsd[(i, j)]['k'] = True
+                    print(caminos_bloqueados)
+
     def step_profundidad(self, paramsd, matriz):
         aux = 0
         col= matriz.shape[0]
@@ -375,7 +464,32 @@ class Agente:
                             else:
                                 return False
 
-    
+    def step_estrella(self, paramsd):
+        nodoaux = None
+        evaluacion_auxiliar=0
+        paramsd[self.nodo_act.data]['V'] = True
+        if not paramsd[self.nodo_act.data]['F']:
+            print(paramsd[self.nodo_act.data],self.nodo_act.data)
+            if not paramsd[self.nodo_act.data]['k']:
+                for nodo in self.nodo_act.hijos:
+                    if not evaluacion_auxiliar and not paramsd[nodo.data]['V']:
+                        evaluacion_auxiliar=nodo.evaluacion
+                        nodoaux=nodo
+
+                    elif nodo.evaluacion<evaluacion_auxiliar and not paramsd[nodo.data]['V']:
+                        evaluacion_auxiliar = nodo.evaluacion
+                        nodoaux = nodo
+
+                paramsd[self.nodo_act.data]['X'] = False
+                paramsd[nodoaux.data]['X'] = True
+                self.nodo_act=nodoaux
+            else:
+                paramsd[self.nodo_act.data]['X']=False
+                self.nodo_act = self.nodo_act.padre
+                paramsd[self.nodo_act.data]['X']=True
+                print("holo")
+            print(paramsd[self.nodo_act.data],self.nodo_act.data)
+
     def step_down(self, paramsd, matriz):
     
         col= matriz.shape[0]
@@ -465,7 +579,10 @@ class Agente:
     
                                 return costo
                         
+    def costo_acumulado(self,i,j,matriz):
+        costo_acumulado=self.nodo_act.costo_acumulado+ self.ente[matriz[i][j]]
+        return costo_acumulado
 
-        
-        
-   
+    def calcular_distancia(self,i,j,xfinal,yfinal):
+        distancia=abs(i-xfinal)+abs(j-yfinal)
+        return distancia
