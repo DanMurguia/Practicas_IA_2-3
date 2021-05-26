@@ -3,6 +3,7 @@ import random
 import genera_matriz as gm
 import agente as ag
 import time
+import Nodo
 
 BLACK = (0, 0, 0)
 water = (0, 0, 255)
@@ -16,18 +17,23 @@ pantano = (102, 0, 102)
 nieve = (255, 255, 255)
 land = (181, 101, 29)
 
+
+
 # tamañoCasilla es el tamaño que tendrá cada lado de las casillas
 tamañoCasilla = 40
 
 # tamañoCuadricula es el numero de casillas que tendrá la cuadricula por lado
 tamañoCuadricula = 15
 columna = 0
+
 def dibujar(agente,modo,xx,yy):
     print("Agente"+str(agente))
     print("Modo"+str(modo))
     pygame.init()
     costo=0
     costoAcumulado=0
+    lista=[]
+    contf = 0
 
     # tamañoPantalla es el una tupla con los valores del tamaño de la pantalla
     tamañoPantalla = (tamañoCasilla*tamañoCuadricula,
@@ -47,7 +53,7 @@ def dibujar(agente,modo,xx,yy):
 
     # Fuente es un estilo de imagen inicializada dentro de pygame. Pygame solo muestra imagenes o dibujos, no texto.
     Fuente = pygame.font.SysFont('fontname', 16)
-    matriz = gm.cargar_matriz('laberinto.txt')
+    matriz = gm.cargar_matriz('matriz_aleatoria.txt')
     fil = matriz.shape[0]
     col = matriz.shape[1]
     paramsd = {}             #Se crea el diccionario de parametros
@@ -55,15 +61,19 @@ def dibujar(agente,modo,xx,yy):
 
     for x in range(0, fil):
         for y in range(0, col):
-            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False, 'S':False, 'F':False, 'k':False}
+            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False}
 
-    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False, 'S':False,'F':False}
-    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 'S':False,'F':True}
+    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False, 'k':False, 'n':False}
+    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True, 'k':False, 'n':False}
 
-    ente=ag.definirAgente(agente)
 
-    ag.spawn(paramsd, matriz, ente)
-
+    agente=ag.Agente(agente)
+    
+    agente.spawn(paramsd, matriz)
+       
     while not gameOver:
             
         pantalla.fill(BLACK)  # La pantalla se llena de un fondo negro.
@@ -71,7 +81,7 @@ def dibujar(agente,modo,xx,yy):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        ag.sense(paramsd,matriz, ente)
+        agente.sense_estrella(paramsd,matriz,6,8)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -111,9 +121,6 @@ def dibujar(agente,modo,xx,yy):
                     else:
                         pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
 
-
-                    columna = columna+1
-
                     ## Se obtiene la lista de parametros para esta coordenada
             
                     if(lista_params['V']):
@@ -131,6 +138,13 @@ def dibujar(agente,modo,xx,yy):
                     if (lista_params['F']):
                         X = Fuente.render('F', lista_params['F'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
+                    if lista_params['X'] and lista_params['F'] and contf == 2:
+                        gameOver=True
+                        print("Ha llegado a su objetivo!!!")
+                        time.sleep(30)
+                    else:
+                        contf += 1
+                    columna = columna+1
         
             # Texto es la imagen con la que se pintarán las coordenadas
             Texto = Fuente.render(str(T), True, BLACK)
@@ -142,9 +156,10 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo=ag.step(paramsd, matriz, ente)
-            if(costo):
-                costoAcumulado=costo+costoAcumulado
+            costo = agente.step_estrella(paramsd)
+            agente.root.imprimir_arbol()
+              
+           # costoAcumulado=costo+costoAcumulado
         elif modo == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -152,19 +167,20 @@ def dibujar(agente,modo,xx,yy):
                     gameOver = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
-                        costo=ag.step_up(paramsd, matriz, ente)
+
+                        costo=agente.step_up(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_a:
-                        costo=ag.step_left(paramsd, matriz, ente)
+                        costo = agente.step_left(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_s:
-                        costo=ag.step_down(paramsd, matriz, ente)
+                        costo=agente.step_down(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_d:
-                        costo=ag.step_right(paramsd, matriz, ente)
+                        costo=agente.step_right(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
         
