@@ -3,6 +3,9 @@ class Nodo:
         self.data = data
         self.hijos = []
         self.padre = None
+        self.costo_acumulado = 0
+        self.distancia = None
+        self.evaluacion = None
 
     def obtener_nivel(self):
         nivel = 0
