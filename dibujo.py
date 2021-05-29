@@ -26,6 +26,10 @@ tamañoCasilla = 40
 tamañoCuadricula = 15
 columna = 0
 
+'''def dibujar(agente,algoritmo,modo,xinicial,yinicial,xfinal,yfinal):
+    if algoritmo == 3:
+        dibujar_estrella(agente,xinicial,yinicial,xfinal,yfinal)'''
+
 def dibujar(agente,modo,xx,yy):
     print("Agente"+str(agente))
     print("Modo"+str(modo))
@@ -33,6 +37,7 @@ def dibujar(agente,modo,xx,yy):
     costo=0
     costoAcumulado=0
     lista=[]
+    contf = 0
 
     # tamañoPantalla es el una tupla con los valores del tamaño de la pantalla
     tamañoPantalla = (tamañoCasilla*tamañoCuadricula,
@@ -61,20 +66,18 @@ def dibujar(agente,modo,xx,yy):
     for x in range(0, fil):
         for y in range(0, col):
             paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False,
-                               'S':False, 'F':False, 'k':False, 'n':False}
+                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0}
 
     paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
-                         'S':False,'F':False, 'k':False, 'n':False}
+                         'S':False,'F':False, 'k':False, 'n':False,'h':0}
     paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
-                      'S':False,'F':True, 'k':False, 'n':False}
+                      'S':False,'F':True, 'k':False, 'n':False,'h':0}
 
-    ente=ag.definirAgente(agente)
+
+    agente=ag.Agente(agente)
     
-        
-    root = Nodo.Nodo("ARBOL")
-    nodo_act,lista= ag.spawn_anchura(paramsd, matriz, ente,lista)
-    root.agregar_hijo(nodo_act)
-    
+    agente.spawn(paramsd, matriz)
+       
     while not gameOver:
             
         pantalla.fill(BLACK)  # La pantalla se llena de un fondo negro.
@@ -82,7 +85,7 @@ def dibujar(agente,modo,xx,yy):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        ag.sense(paramsd,matriz, ente)
+        agente.sense_estrella(paramsd,matriz,6,8)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -122,29 +125,28 @@ def dibujar(agente,modo,xx,yy):
                     else:
                         pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
 
-                    if lista_params['X'] and lista_params['F']:
-                        gameOver=True
-                        print("Ha llegado a su objetivo!!!")
-                        time.sleep(30)
-                    columna = columna+1
-
                     ## Se obtiene la lista de parametros para esta coordenada
             
-                    if(lista_params['V']):
-                        V = Fuente.render('V', lista_params['V'], BLACK)
-                        pantalla.blit(V, [j+3, i+26])
+                    
                     if(lista_params['O']):
-                        O = Fuente.render('O', lista_params['O'], BLACK)
-                        pantalla.blit(O, [j+12, i+26])
+                        O = Fuente.render('O('+str(lista_params['h'])+')', lista_params['O'], BLACK)
+                        pantalla.blit(O, [j+5, i+25])
                     if(lista_params['I']):
                         I = Fuente.render('I', lista_params['I'], BLACK)
                         pantalla.blit(I, [j+15, i+15])
                     if(lista_params['X']):
                         X = Fuente.render('X', lista_params['X'], BLACK)
-                        pantalla.blit(X, [j+30, i+26])
+                        pantalla.blit(X, [j+3, i+3])
                     if (lista_params['F']):
                         X = Fuente.render('F', lista_params['F'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
+                    if lista_params['X'] and lista_params['F'] and contf == 2:
+                        gameOver=True
+                        print("Ha llegado a su objetivo!!!")
+                        time.sleep(30)
+                    elif lista_params['X'] and lista_params['F']:
+                        contf += 1
+                    columna = columna+1
         
             # Texto es la imagen con la que se pintarán las coordenadas
             Texto = Fuente.render(str(T), True, BLACK)
@@ -156,12 +158,10 @@ def dibujar(agente,modo,xx,yy):
         pygame.display.flip()
 
         if modo == 2:
-            costo, nodo_act,fila = ag.step_anchura(paramsd, matriz, ente, nodo_act,lista)
-            root.imprimir_arbol()
-            for i in range(len(lista)):
-                print(lista[i].data)
-            
-            costoAcumulado=costo+costoAcumulado
+            costo = agente.step_estrella(paramsd)
+            agente.root.imprimir_arbol()
+              
+           # costoAcumulado=costo+costoAcumulado
         elif modo == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -169,19 +169,20 @@ def dibujar(agente,modo,xx,yy):
                     gameOver = True
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
-                        costo, nodo_act=ag.step_up(paramsd, matriz, ente, nodo_act)
+
+                        costo=agente.step_up(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_a:
-                        costo,nodo_act=ag.step_left(paramsd, matriz, ente, nodo_act)
+                        costo = agente.step_left(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_s:
-                        costo,nodo_act=ag.step_down(paramsd, matriz, ente, nodo_act)
+                        costo=agente.step_down(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
                     elif event.key == pygame.K_d:
-                        costo,nodo_act =ag.step_right(paramsd, matriz, ente, nodo_act)
+                        costo=agente.step_right(paramsd, matriz)
                         if(costo):
                             costoAcumulado=costo+costoAcumulado
         
