@@ -185,6 +185,6 @@ def dibujar(agente,modo,xx,yy):
                             costoAcumulado=costo+costoAcumulado
         
         
-        reloj.tick(5)
+        reloj.tick(2)
     pygame.quit()
     print("Costo acumulado: "+str(costoAcumulado))

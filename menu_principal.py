@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import filedialog
-import dibujo 
+import menu2 
 
 
 class MainWindow(tk.Frame):
@@ -9,19 +9,11 @@ class MainWindow(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.parent.title("MINTRIS")
-        self.parent.geometry("505x630")
+        self.parent.geometry("680x500")
         self.configure(bg='#6B0002')
-        self.filename = ""
-        self.var_key = StringVar()
-        self.var_iv = StringVar()
         self.var_ente = IntVar()
-        self.var_ekis = IntVar()
-        self.var_ye = IntVar()
         self.var_modo = IntVar()
-        self.ivname=""
-        self.imagen = []
-        self.img_enc = []
-        self.cabecera = []
+
     
         lbl = tk.Label(self, text="M I N T R I S",font=('Arial',32,'bold italic')
                         ,background='#6B0002', foreground = '#91722F')
@@ -30,7 +22,7 @@ class MainWindow(tk.Frame):
         lblmod = tk.Label(self, text="Seleccione un personaje",
                          font=('Arial',18,'bold italic')
                         ,background='#6B0002', foreground = '#04D14C')
-        lblmod.grid(row=1,column=0,columnspan=2,padx =10 ,pady=15)
+        lblmod.grid(row=1,column=0,columnspan=3,padx =10 ,pady=15)
         
         
         rad0 = Radiobutton(self,text='Humano', value=1,
@@ -57,7 +49,7 @@ class MainWindow(tk.Frame):
         lblmod = tk.Label(self, text="Seleccione un modo",
                          font=('Arial',18,'bold italic')
                         ,background='#6B0002', foreground = '#04D14C')
-        lblmod.grid(row=4,column=0,columnspan=2 ,pady=15)
+        lblmod.grid(row=4,column=0,columnspan=3 ,pady=15)
         
         
         rad0 = Radiobutton(self,text='Manual', value=1,
@@ -65,47 +57,36 @@ class MainWindow(tk.Frame):
                            background='#6B0002',foreground = '#968118',variable=self.var_modo)
         rad0.grid(row=5, column=0)
         
-        rad1 = Radiobutton(self,text='Automatico', value=2,
-                           font=('Arial',14,'bold italic'), 
+        rad1 = Radiobutton(self,text='Profundidad', value=2,
+                           font=('Arial',12,'bold italic'), 
                            background='#6B0002',foreground = '#968118',variable=self.var_modo)
         rad1.grid(row=5, column=1)
         
-        lblmod = tk.Label(self, text="Ingrese las coordenadas de inicio",
-                         font=('Arial',18,'bold italic')
-                        ,background='#6B0002', foreground = '#04D14C')
-        lblmod.grid(row=6,column=0,columnspan=3 ,pady=15)
+        rad2 = Radiobutton(self,text='Anchura', value=3,
+                           font=('Arial',12,'bold italic'), 
+                           background='#6B0002',foreground = '#968118',variable=self.var_modo)
+        rad2.grid(row=5, column=2)
         
-        lblmod = tk.Label(self, text="X:",
-                         font=('Arial',14,'bold italic')
-                        ,background='#6B0002', foreground = '#04D14C')
-        lblmod.grid(row=7,column=0 ,pady=15)
+        rad3 = Radiobutton(self,text='A*', value=4,
+                           font=('Arial',14,'bold italic'), 
+                           background='#6B0002',foreground = '#968118',variable=self.var_modo)
+        rad3.grid(row=6, column=1)
         
-        self.ekis = tk.Entry(self, width = 5,textvariable=self.var_ekis,
-                             font=('Arial',14))
-        self.ekis.grid(row=7, column=1)
-
-        lblmod = tk.Label(self, text="Y:",
-                         font=('Arial',14,'bold italic')
-                        ,background='#6B0002', foreground = '#04D14C')
-        lblmod.grid(row=8,column=0 ,pady=15)
         
-        self.ye = tk.Entry(self, width = 5,textvariable=self.var_ye,
-                             font=('Arial',14))
-        self.ye.grid(row=8, column=1)
-                
-        btn_Descifrar = tk.Button(self, text="Jugar", 
-                               bg='#4B7D23',width=10,height = 2, command=self.jugar,
+        btn_Descifrar = tk.Button(self, text="Siguiente", 
+                               bg='#4B7D23',width=10,height = 2, command=self.siguiente,
                                foreground='white',font=('Arial',10,'bold italic'))
-        btn_Descifrar.grid(row=9,column=1,pady=20)
+        btn_Descifrar.grid(row=7,column=1,pady=20)
         
         
-    def jugar(self):
+    def siguiente(self):
         ente = self.var_ente.get()
         modo = self.var_modo.get()
-        x = self.var_ekis.get()
-        y = self.var_ye.get()
+        parametros_inicio = {}
         if ente and modo:
-            dibujo.dibujar(ente,modo,y,x)
+            parametros_inicio['ente']=ente
+            parametros_inicio['modo']=modo
+            menu2.Menu2(self.parent,parametros_inicio)
         else:
             messagebox.showinfo(message="Seleccione un personaje y un modo")
         
