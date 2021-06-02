@@ -23,8 +23,7 @@ class Agente:
             ente =chupacabras
         elif agente<1 and agente>4:
             print("ente no definido")
-        return ente
-        
+        return ente       
 
     def spawn(self, paramsd,matriz):
         col= matriz.shape[0]
@@ -61,8 +60,6 @@ class Agente:
                         paramsd[(i, j)]['S'] = False
                         paramsd[(i - 1, j)]['F'] = True
                         paramsd[(i - 1, j)]['S'] = True
-    
-    
     
     def sense(self,paramsd, matriz):
         col= matriz.shape[0]
@@ -467,6 +464,8 @@ class Agente:
                                 return False
                             else:
                                 return False
+
+
 
     def step_estrella(self, paramsd):
         nodoaux = None

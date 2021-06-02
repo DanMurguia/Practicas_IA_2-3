@@ -17,8 +17,6 @@ pantano = (102, 0, 102)
 nieve = (255, 255, 255)
 land = (181, 101, 29)
 
-
-
 # tamañoCasilla es el tamaño que tendrá cada lado de las casillas
 tamañoCasilla = 40
 
@@ -26,13 +24,17 @@ tamañoCasilla = 40
 tamañoCuadricula = 15
 columna = 0
 
-'''def dibujar(agente,algoritmo,modo,xinicial,yinicial,xfinal,yfinal):
-    if algoritmo == 3:
-        dibujar_estrella(agente,xinicial,yinicial,xfinal,yfinal)'''
+def dibujar(parametros_iniciales):
+    agente=parametros_iniciales['ente']
+    modo=parametros_iniciales['modo']
+    i_inicial=parametros_iniciales['i_inicial']
+    j_inicial=parametros_iniciales['j_inicial']
+    i_final=parametros_iniciales['i_final']
+    j_final=parametros_iniciales['j_final']
+    dibujo=parametros_iniciales['dibujo']
 
-def dibujar(agente,modo,xx,yy):
-    print("Agente"+str(agente))
-    print("Modo"+str(modo))
+    #print("Agente"+str(agente))
+    #print("Modo"+str(modo))
     pygame.init()
     costo=0
     costoAcumulado=0
@@ -60,19 +62,17 @@ def dibujar(agente,modo,xx,yy):
     matriz = gm.cargar_matriz('laberinto.txt')
     fil = matriz.shape[0]
     col = matriz.shape[1]
-    paramsd = {}             #Se crea el diccionario de parametros
+    paramsd={}
 
+    for i in range(0, fil):
+        for j in range(0, col):
+            paramsd[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
+                               'S':False, 'F':False, 'k':False, 'n':False}
 
-    for x in range(0, fil):
-        for y in range(0, col):
-            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False,
-                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0}
-
-    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
-                         'S':False,'F':False, 'k':False, 'n':False,'h':0}
-    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
-                      'S':False,'F':True, 'k':False, 'n':False,'h':0}
-
+    paramsd[(i_inicial, j_inicial)] = {'V': False, 'O': False, 'I': True, 'X': False,
+                         'S':False,'F':False, 'k':False, 'n':False}
+    paramsd[(i_final,j_final)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+                      'S':False,'F':True, 'k':False, 'n':False}
 
     agente=ag.Agente(agente)
     
@@ -85,7 +85,7 @@ def dibujar(agente,modo,xx,yy):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        agente.sense_estrella(paramsd,matriz,6,8)
+        agente.sense(paramsd,matriz)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -127,25 +127,28 @@ def dibujar(agente,modo,xx,yy):
 
                     ## Se obtiene la lista de parametros para esta coordenada
             
-                    
+                    if(lista_params['V']):
+                        V = Fuente.render('V', lista_params['V'], BLACK)
+                        pantalla.blit(V, [j+3, i+26])
                     if(lista_params['O']):
-                        O = Fuente.render('O('+str(lista_params['h'])+')', lista_params['O'], BLACK)
-                        pantalla.blit(O, [j+5, i+25])
+                        O = Fuente.render('O', lista_params['O'], BLACK)
+                        pantalla.blit(O, [j+12, i+26])
                     if(lista_params['I']):
                         I = Fuente.render('I', lista_params['I'], BLACK)
                         pantalla.blit(I, [j+15, i+15])
                     if(lista_params['X']):
                         X = Fuente.render('X', lista_params['X'], BLACK)
-                        pantalla.blit(X, [j+3, i+3])
+                        pantalla.blit(X, [j+30, i+26])
                     if (lista_params['F']):
                         X = Fuente.render('F', lista_params['F'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
                     if lista_params['X'] and lista_params['F'] and contf == 2:
                         gameOver=True
                         print("Ha llegado a su objetivo!!!")
-                        time.sleep(30)
+                        time.sleep(10)
                     elif lista_params['X'] and lista_params['F']:
                         contf += 1
+                        print("ContF:"+str(contf))
                     columna = columna+1
         
             # Texto es la imagen con la que se pintarán las coordenadas
@@ -157,11 +160,12 @@ def dibujar(agente,modo,xx,yy):
 
         pygame.display.flip()
 
-        if modo == 2:
-            costo = agente.step_estrella(paramsd)
+        if modo == 3:
+            costo = agente.step_anchura(paramsd,matriz)
             agente.root.imprimir_arbol()
-              
-           # costoAcumulado=costo+costoAcumulado
+        elif modo == 2:
+             costo = agente.step_profundidad(paramsd,matriz)
+             agente.root.imprimir_arbol()
         elif modo == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -187,6 +191,6 @@ def dibujar(agente,modo,xx,yy):
                             costoAcumulado=costo+costoAcumulado
         
         
-        reloj.tick(5)
+        reloj.tick(2)
     pygame.quit()
     print("Costo acumulado: "+str(costoAcumulado))
