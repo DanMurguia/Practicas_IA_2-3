@@ -97,7 +97,7 @@ def dibujar(parametros_iniciales):
 
                     lista_params = paramsd[(fila-1, columna)]
 
-                    if lista_params['V'] or lista_params['S']:
+                    if ((lista_params['V'] or lista_params['S']) and dibujo == 1) or ((lista_params['O'] and dibujo == 2) or lista_params['I'] or lista_params['F']):
 
                         if linea[columna] == 0:
                                # Los cuadros son ligeramente más pequeños para dar el efecto de la cuadricula.
@@ -120,7 +120,6 @@ def dibujar(parametros_iniciales):
                                 pygame.draw.rect(pantalla, redP, [j, i, 38, 38], 0)
                         elif linea[columna] == 9:
                                 pygame.draw.rect(pantalla, pinkP, [j, i, 38, 38], 0)
-
 
                     else:
                         pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
