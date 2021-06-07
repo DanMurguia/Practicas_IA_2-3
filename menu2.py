@@ -66,7 +66,7 @@ class Menu2(tk.Toplevel):
                              font=('Arial',14))
         self.ye.grid(row=4, column=1,columnspan=2)
                 
-        btn_Descifrar = tk.Button(self, text="Jugar", 
+        btn_Descifrar = tk.Button(self, text="Siguiente", 
                                bg='#4B7D23',width=10,height = 2, command=self.siguiente,
                                foreground='white',font=('Arial',10,'bold italic'))
         btn_Descifrar.grid(row=9,column=0,columnspan=3,pady=20)
