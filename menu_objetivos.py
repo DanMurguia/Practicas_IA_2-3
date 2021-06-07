@@ -1,6 +1,6 @@
 from tkinter import *
 import tkinter as tk
-import dibujo
+import dibujo_estrella as dibujo
 
 class MenuObjetivos(tk.Toplevel):
     def __init__(self, parent, parametros, *args,**kwargs):

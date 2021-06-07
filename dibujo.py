@@ -17,8 +17,6 @@ pantano = (102, 0, 102)
 nieve = (255, 255, 255)
 land = (181, 101, 29)
 
-
-
 # tamañoCasilla es el tamaño que tendrá cada lado de las casillas
 tamañoCasilla = 40
 
@@ -26,9 +24,17 @@ tamañoCasilla = 40
 tamañoCuadricula = 15
 columna = 0
 
-def dibujar(agente,modo,xx,yy):
-    print("Agente"+str(agente))
-    print("Modo"+str(modo))
+def dibujar(parametros_iniciales):
+    agente=parametros_iniciales['ente']
+    modo=parametros_iniciales['modo']
+    i_inicial=parametros_iniciales['i_inicial']
+    j_inicial=parametros_iniciales['j_inicial']
+    i_final=parametros_iniciales['i_final']
+    j_final=parametros_iniciales['j_final']
+    dibujo=parametros_iniciales['dibujo']
+
+    #print("Agente"+str(agente))
+    #print("Modo"+str(modo))
     pygame.init()
     costo=0
     costoAcumulado=0
@@ -56,19 +62,17 @@ def dibujar(agente,modo,xx,yy):
     matriz = gm.cargar_matriz('matriz_aleatoria.txt')
     fil = matriz.shape[0]
     col = matriz.shape[1]
-    paramsd = {}             #Se crea el diccionario de parametros
+    paramsd={}
 
-
-    for x in range(0, fil):
-        for y in range(0, col):
-            paramsd[(x, y)] = {'V': False, 'O': False, 'I': False, 'X': False,
+    for i in range(0, fil):
+        for j in range(0, col):
+            paramsd[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
                                'S':False, 'F':False, 'k':False, 'n':False}
 
-    paramsd[(xx, yy)] = {'V': False, 'O': False, 'I': True, 'X': False,
+    paramsd[(i_inicial, j_inicial)] = {'V': False, 'O': False, 'I': True, 'X': False,
                          'S':False,'F':False, 'k':False, 'n':False}
-    paramsd[(6,8)] = {'V': False, 'O': False, 'I': False, 'X': False, 
+    paramsd[(i_final,j_final)] = {'V': False, 'O': False, 'I': False, 'X': False, 
                       'S':False,'F':True, 'k':False, 'n':False}
-
 
     agente=ag.Agente(agente)
     
@@ -93,7 +97,7 @@ def dibujar(agente,modo,xx,yy):
 
                     lista_params = paramsd[(fila-1, columna)]
 
-                    if lista_params['V'] or lista_params['S']:
+                    if ((lista_params['V'] or lista_params['S']) and dibujo == 1) or ((lista_params['O'] and dibujo == 2) or lista_params['I'] or lista_params['F']):
 
                         if linea[columna] == 0:
                                # Los cuadros son ligeramente más pequeños para dar el efecto de la cuadricula.
@@ -116,7 +120,6 @@ def dibujar(agente,modo,xx,yy):
                                 pygame.draw.rect(pantalla, redP, [j, i, 38, 38], 0)
                         elif linea[columna] == 9:
                                 pygame.draw.rect(pantalla, pinkP, [j, i, 38, 38], 0)
-
 
                     else:
                         pygame.draw.rect(pantalla, BLACK, [j, i, 38, 38], 0)
@@ -141,9 +144,10 @@ def dibujar(agente,modo,xx,yy):
                     if lista_params['X'] and lista_params['F'] and contf == 2:
                         gameOver=True
                         print("Ha llegado a su objetivo!!!")
-                        time.sleep(30)
-                    else:
+                        time.sleep(10)
+                    elif lista_params['X'] and lista_params['F']:
                         contf += 1
+                        print("ContF:"+str(contf))
                     columna = columna+1
         
             # Texto es la imagen con la que se pintarán las coordenadas
@@ -155,11 +159,12 @@ def dibujar(agente,modo,xx,yy):
 
         pygame.display.flip()
 
-        if modo == 2:
-            costo = agente.step_estrella(paramsd)
+        if modo == 3:
+            costo = agente.step_anchura(paramsd,matriz)
             agente.root.imprimir_arbol()
-              
-           # costoAcumulado=costo+costoAcumulado
+        elif modo == 2:
+             costo = agente.step_profundidad(paramsd,matriz)
+             agente.root.imprimir_arbol()
         elif modo == 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

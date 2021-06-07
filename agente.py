@@ -23,8 +23,7 @@ class Agente:
             ente =chupacabras
         elif agente<1 and agente>4:
             print("ente no definido")
-        return ente
-        
+        return ente       
 
     def spawn(self, paramsd,matriz):
         col= matriz.shape[0]
@@ -61,8 +60,7 @@ class Agente:
                         paramsd[(i, j)]['S'] = False
                         paramsd[(i - 1, j)]['F'] = True
                         paramsd[(i - 1, j)]['S'] = True
-    
-    
+
     def sense(self,paramsd, matriz):
         col= matriz.shape[0]
         fil = matriz.shape[1]
@@ -136,6 +134,7 @@ class Agente:
                                 nuevo_nodo.costo_acumulado= self.costo_acumulado(i - 1, j, matriz)
                                 nuevo_nodo.distancia= self.calcular_distancia(i - 1, j,xfinal,yfinal)
                                 nuevo_nodo.evaluacion=nuevo_nodo.costo_acumulado+nuevo_nodo.distancia
+                                paramsd[(i-1, j)]['h'] = nuevo_nodo.evaluacion
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
@@ -156,6 +155,7 @@ class Agente:
                                 nuevo_nodo.costo_acumulado = self.costo_acumulado(i +1, j, matriz)
                                 nuevo_nodo.distancia = self.calcular_distancia(i + 1, j,xfinal, yfinal)
                                 nuevo_nodo.evaluacion = nuevo_nodo.costo_acumulado + nuevo_nodo.distancia
+                                paramsd[(i +1, j)]['h'] = nuevo_nodo.evaluacion
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
@@ -175,6 +175,7 @@ class Agente:
                                 nuevo_nodo.costo_acumulado = self.costo_acumulado(i , j-1, matriz)
                                 nuevo_nodo.distancia = self.calcular_distancia(i, j - 1,xfinal, yfinal)
                                 nuevo_nodo.evaluacion = nuevo_nodo.costo_acumulado + nuevo_nodo.distancia
+                                paramsd[(i , j-1)]['h'] = nuevo_nodo.evaluacion
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
@@ -194,6 +195,8 @@ class Agente:
                                 nuevo_nodo.costo_acumulado = self.costo_acumulado(i , j+1, matriz)
                                 nuevo_nodo.distancia = self.calcular_distancia(i, j + 1,xfinal, yfinal)
                                 nuevo_nodo.evaluacion = nuevo_nodo.costo_acumulado + nuevo_nodo.distancia
+                                paramsd[(i , j+1)]['h'] = nuevo_nodo.evaluacion
+
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
@@ -205,7 +208,8 @@ class Agente:
 
                     if caminos_bloqueados > 3:
                         paramsd[(i, j)]['k'] = True
-                    print(str(caminos_bloqueados)+" caminos bloqueados del nodo"+str(self.nodo_act.data))
+                    print(caminos_bloqueados)
+
 
     def step_profundidad(self, paramsd, matriz):
         aux = 0
@@ -463,6 +467,8 @@ class Agente:
                             else:
                                 return False
 
+
+
     def step_estrella(self, paramsd):
         nodoaux = None
         evaluacion_auxiliar=0
@@ -474,7 +480,6 @@ class Agente:
                     if not evaluacion_auxiliar and not paramsd[nodo.data]['V']:
                         evaluacion_auxiliar=nodo.evaluacion
                         nodoaux=nodo
-
                     elif nodo.evaluacion<evaluacion_auxiliar and not paramsd[nodo.data]['V']:
                         evaluacion_auxiliar = nodo.evaluacion
                         nodoaux = nodo
