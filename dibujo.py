@@ -59,7 +59,7 @@ def dibujar(parametros_iniciales):
 
     # Fuente es un estilo de imagen inicializada dentro de pygame. Pygame solo muestra imagenes o dibujos, no texto.
     Fuente = pygame.font.SysFont('fontname', 16)
-    matriz = gm.cargar_matriz('laberinto.txt')
+    matriz = gm.cargar_matriz('matriz_aleatoria.txt')
     fil = matriz.shape[0]
     col = matriz.shape[1]
     paramsd={}
@@ -85,7 +85,7 @@ def dibujar(parametros_iniciales):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        agente.sense(paramsd,matriz)
+        agente.sense_estrella(paramsd,matriz,6,8)
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
