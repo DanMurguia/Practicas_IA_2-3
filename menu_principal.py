@@ -9,7 +9,7 @@ class MainWindow(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.parent.title("MINTRIS")
-        self.parent.geometry("680x500")
+        self.parent.geometry("500x500")
         self.configure(bg='#6B0002')
         self.var_ente = IntVar()
         self.var_modo = IntVar()
