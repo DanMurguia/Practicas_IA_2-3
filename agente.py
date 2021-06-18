@@ -10,7 +10,11 @@ class Agente:
         self.nodo_act = None
         self.ente = self.definir_agente(agente)
         self.root = None
-        self.lista = [] 
+        self.lista = []
+        self.lista_nodos = [] 
+        self.costoTotal=0
+        self.ordenados=[]
+        self.camino=[] 
         
     def definir_agente(self, agente):
         if agente==1:
@@ -138,6 +142,7 @@ class Agente:
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
+                                self.lista_nodos.append(nuevo_nodo)
 
                         else:# self.ente[matriz[i - 1][j]] or paramsd[(i - 1, j)]['V']:
                             caminos_bloqueados += 1
@@ -159,6 +164,7 @@ class Agente:
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
+                                self.lista_nodos.append(nuevo_nodo)
                         else:# self.ente[matriz[i + 1][j]] or paramsd[(i + 1, j)]['V']:
                             caminos_bloqueados += 1
                     else:
@@ -179,6 +185,7 @@ class Agente:
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
+                                self.lista_nodos.append(nuevo_nodo)
                         else:# self.ente[matriz[i][j - 1]] or paramsd[(i, j - 1)]['V']:
                             caminos_bloqueados += 1
                     else:
@@ -200,6 +207,7 @@ class Agente:
                                 print(nuevo_nodo.distancia)
                                 print(nuevo_nodo.costo_acumulado)
                                 print(nuevo_nodo.evaluacion)
+                                self.lista_nodos.append(nuevo_nodo)
                         else:# self.ente[matriz[i][j + 1]] or paramsd[(i, j + 1)]['V']:
                             caminos_bloqueados += 1
                     else:
@@ -469,29 +477,17 @@ class Agente:
 
 
 
-    def step_estrella(self, paramsd):
+    def step_estrella(self, paramsd,lista_obj):
         nodoaux = None
         evaluacion_auxiliar=0
         paramsd[self.nodo_act.data]['V'] = True
-        if not paramsd[self.nodo_act.data]['F']:
+        if not paramsd[self.nodo_act.data]['F'] or len(lista_obj)>1:
             print(paramsd[self.nodo_act.data],self.nodo_act.data)
-            if not paramsd[self.nodo_act.data]['k']:
-                for nodo in self.nodo_act.hijos:
-                    if not evaluacion_auxiliar and not paramsd[nodo.data]['V']:
-                        evaluacion_auxiliar=nodo.evaluacion
-                        nodoaux=nodo
-                    elif nodo.evaluacion<evaluacion_auxiliar and not paramsd[nodo.data]['V']:
-                        evaluacion_auxiliar = nodo.evaluacion
-                        nodoaux = nodo
-
-                paramsd[self.nodo_act.data]['X'] = False
-                paramsd[nodoaux.data]['X'] = True
-                self.nodo_act=nodoaux
-            else:
-                paramsd[self.nodo_act.data]['X']=False
-                self.nodo_act = self.nodo_act.padre
-                paramsd[self.nodo_act.data]['X']=True
-                print("holo")
+            nodoaux=self.lista_nodos[0]
+            self.lista_nodos.pop(0)
+            paramsd[self.nodo_act.data]['X'] = False
+            paramsd[nodoaux.data]['X'] = True
+            self.nodo_act=nodoaux
             print(paramsd[self.nodo_act.data],self.nodo_act.data)
 
     def step_down(self, paramsd, matriz):
@@ -590,3 +586,21 @@ class Agente:
     def calcular_distancia(self,i,j,xfinal,yfinal):
         distancia=abs(i-xfinal)+abs(j-yfinal)
         return distancia
+
+    def ordenar_nodos(self):
+    	self.ordenados=sorted(self.lista_nodos,key=lambda x: x.evaluacion)
+    	self.lista_nodos=self.ordenados
+    	for nodo in self.lista_nodos:
+    		print(nodo.data,nodo.evaluacion)
+
+    def reiniciar_lista(self):
+    	self.lista_nodos.clear()
+
+    def recorrido_optimo(self):
+    	nodoaux = self.nodo_act
+    	while(nodoaux != None):
+    		self.camino.append(nodoaux)
+    		nodoaux=nodoaux.padre
+    	self.camino.reverse()
+    	for nodo in self.camino:
+    		print(nodo.data)

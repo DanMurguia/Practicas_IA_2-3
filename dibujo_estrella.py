@@ -37,12 +37,17 @@ def dibujar(parametros_iniciales):
     i_inicial=parametros_iniciales['i_inicial']
     j_final=parametros_iniciales['j_final']
     i_final=parametros_iniciales['i_final']
+    i1=parametros_iniciales['i1']
+    j1=parametros_iniciales['j1']
+    i2=parametros_iniciales['i2']
+    j2=parametros_iniciales['j2']
+
     print("Agente"+str(agente))
     print("Modo"+str(modo))
     pygame.init()
     costo=0
     costoAcumulado=0
-    lista=[]
+    lista_obj=[]
     contf = 0
 
     # tamañoPantalla es el una tupla con los valores del tamaño de la pantalla
@@ -72,12 +77,18 @@ def dibujar(parametros_iniciales):
     for i in range(0, fil):
         for j in range(0, col):
             paramsd[(i, j)] = {'V': False, 'O': False, 'I': False, 'X': False,
-                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0}
+                               'S':False, 'F':False, 'k':False, 'n':False, 'h':0,'Obj':False}
 
     paramsd[(i_inicial, j_inicial)] = {'V': False, 'O': False, 'I': True, 'X': False,
-                         'S':False,'F':False, 'k':False, 'n':False,'h':0}
+                         'S':False,'F':False, 'k':False, 'n':False,'h':0,'Obj':False}
     paramsd[(i_final, j_final)] = {'V': False, 'O': False, 'I': False, 'X': False, 
-                      'S':False,'F':True, 'k':False, 'n':False,'h':0}
+                      'S':False,'F':True, 'k':False, 'n':False,'h':0,'Obj':False}
+    paramsd[(i1, j1)]['Obj'] = True
+    paramsd[(i2, j2)]['Obj'] = True            
+    lista_obj.append((i1,j1))
+    lista_obj.append((i2,j2))    
+    lista_obj.append((i_final,j_final))
+    print(lista_obj)
 
 
     agente=ag.Agente(agente)
@@ -91,7 +102,9 @@ def dibujar(parametros_iniciales):
         T = 0
         #fila es la fila que se va a recorrer de la matriz :V 
         fila = 0
-        agente.sense_estrella(paramsd,matriz,jfinal,ifinal)
+
+        agente.sense_estrella(paramsd,matriz,lista_obj[0][0],lista_obj[0][1])
+        print(lista_obj[0])
         # este for recorre el ancho de la pantalla
         for i in range(1, tamañoPantalla[0], 40):
             linea = matriz[fila] #se obtiene una fila de la matriz
@@ -103,7 +116,7 @@ def dibujar(parametros_iniciales):
 
                     lista_params = paramsd[(fila-1, columna)]
 
-                    if lista_params['V'] or lista_params['S']:
+                    if lista_params['V'] or lista_params['S'] or lista_params['Obj']:
 
                         if linea[columna] == 0:
                                # Los cuadros son ligeramente más pequeños para dar el efecto de la cuadricula.
@@ -143,16 +156,29 @@ def dibujar(parametros_iniciales):
                     if(lista_params['X']):
                         X = Fuente.render('X', lista_params['X'], BLACK)
                         pantalla.blit(X, [j+3, i+3])
+                    if(lista_params['Obj']):
+                        X = Fuente.render('Obj', lista_params['Obj'], BLACK)
+                        pantalla.blit(X, [j+15, i+15])
                     if (lista_params['F']):
                         X = Fuente.render('F', lista_params['F'], BLACK)
                         pantalla.blit(X, [j+15, i+15])
                     if lista_params['X'] and lista_params['F'] and contf == 2:
                         gameOver=True
+                        print("Recorrido optimo!!!")
+                        agente.recorrido_optimo()
                         print("Ha llegado a su objetivo!!!")
                         time.sleep(10)
                     elif lista_params['X'] and lista_params['F']:
                         contf += 1
+                    if lista_params['X'] and lista_params['Obj']:
+                        lista_obj.pop(0)
+                        lista_params['Obj']=False
+                        reiniciar(paramsd,fil,col)
+                        agente.reiniciar_lista()
+                        agente.sense_estrella(paramsd,matriz,lista_obj[0][0],lista_obj[0][1])
                     columna = columna+1
+
+
         
             # Texto es la imagen con la que se pintarán las coordenadas
             Texto = Fuente.render(str(T), True, BLACK)
@@ -163,10 +189,19 @@ def dibujar(parametros_iniciales):
 
         pygame.display.flip()
 
-        costo = agente.step_estrella(paramsd)
-        agente.root.imprimir_arbol()
+        agente.ordenar_nodos()
+        agente.step_estrella(paramsd, lista_obj)
+        #agente.root.imprimir_arbol()
         
         
-        reloj.tick(5)
+        reloj.tick(100)
     pygame.quit()
     print("Costo acumulado: "+str(costoAcumulado))
+def reiniciar(parametros, fil, col):
+    for i in range(0, fil):
+        for j in range(0, col):
+            parametros[(i, j)]['V'] = False
+            parametros[(i, j)]['O'] = False
+            parametros[(i, j)]['k'] = False
+            parametros[(i, j)]['n'] = False
+            parametros[(i, j)]['h'] = False
